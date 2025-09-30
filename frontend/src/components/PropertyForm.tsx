@@ -2,6 +2,13 @@ import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../services/api";
 
 type PropertyType = {
+    id: number
+    title: string;
+    address: string;
+    status: "active" | "inactive";
+}
+
+type PropertyInfoType = {
     title: string;
     address: string;
     status: "active" | "inactive";
@@ -9,12 +16,13 @@ type PropertyType = {
 
 type PropertyFormProps = {
     id?: number,
-    property?: PropertyType,
-    onEdit?: (property: PropertyType) => void
+    property?: PropertyInfoType,
+    onEdit?: (property: PropertyInfoType) => void,
+    setPropertyList?: React.Dispatch<React.SetStateAction<PropertyType[]>>
 }
 
-export function PropertyForm({ id, property, onEdit }: PropertyFormProps) {
-    const [formData, setFormData] = useState<PropertyType>({
+export function PropertyForm({ id, property, onEdit, setPropertyList }: PropertyFormProps) {
+    const [formData, setFormData] = useState<PropertyInfoType>({
         title: "",
         address: "",
         status: "active",
@@ -51,6 +59,7 @@ export function PropertyForm({ id, property, onEdit }: PropertyFormProps) {
     function handlePost() {
         api.post("/property", formData).then((res) => {
             setMessage({ text: "Saved!", type: "success" })
+            setPropertyList && setPropertyList(state => [...state, res.data])
             console.log(res)
         }).catch((err) => {
             setMessage({ text: "Error!", type: "error" })

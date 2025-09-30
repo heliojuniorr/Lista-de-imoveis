@@ -7,10 +7,14 @@ type PropertyType = {
     title: string;
     address: string;
     status: "active" | "inactive";
-};
+}
 
-export function PropertiesList() {
-    const [propertyList, setPropertyList] = useState<PropertyType[]>([])
+type PropertiesListProps = {
+    propertyList: PropertyType[],
+    setPropertyList: React.Dispatch<React.SetStateAction<PropertyType[]>>
+}
+
+export function PropertiesList( { propertyList, setPropertyList }: PropertiesListProps ) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
