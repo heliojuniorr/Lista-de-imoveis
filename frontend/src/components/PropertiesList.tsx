@@ -14,7 +14,7 @@ type PropertiesListProps = {
     setPropertyList: React.Dispatch<React.SetStateAction<PropertyType[]>>
 }
 
-export function PropertiesList( { propertyList, setPropertyList }: PropertiesListProps ) {
+export function PropertiesList({ propertyList, setPropertyList }: PropertiesListProps) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -32,7 +32,6 @@ export function PropertiesList( { propertyList, setPropertyList }: PropertiesLis
     }
 
     function editProperty(property: PropertyType) {
-        console.log("chegou")
         setPropertyList(state => state.map(value => value.id === property.id ? property : value))
     }
 
@@ -47,7 +46,7 @@ export function PropertiesList( { propertyList, setPropertyList }: PropertiesLis
             ) : (
                 <ul className="space-y-4">
                     {propertyList.map((property) => (
-                        <Property key={property.id} property={property} onDelete={removeProperty} onEdit={editProperty}/>
+                        <Property key={property.id} property={property} onDelete={removeProperty} onEdit={editProperty} />
                     ))}
                 </ul>
             )}

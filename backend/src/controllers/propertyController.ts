@@ -32,7 +32,7 @@ const listProperties = async (req: Request, res: Response) => {
   res.json(properties);
 };
 
-const getProperty = async (req: Request<{id: string}, {}, {}>, res: Response) => {
+const getProperty = async (req: Request<{ id: string }, {}, {}>, res: Response) => {
   const id = parseInt(req.params.id);
   const property = await prisma.property.findUnique({ where: { id } });
 
@@ -43,12 +43,12 @@ const getProperty = async (req: Request<{id: string}, {}, {}>, res: Response) =>
   res.json(property);
 };
 
-const updateProperty = async (req: Request<{id: string}, {}, PropertyBody>, res: Response) => {
+const updateProperty = async (req: Request<{ id: string }, {}, PropertyBody>, res: Response) => {
   const id = parseInt(req.params.id);
   const { title, address, status } = req.body;
 
   if (!title || !address || !status) {
-      return res.status(400).json({ error: "Title, address and status are required." });
+    return res.status(400).json({ error: "Title, address and status are required." });
   }
 
   try {
@@ -63,7 +63,7 @@ const updateProperty = async (req: Request<{id: string}, {}, PropertyBody>, res:
   }
 };
 
-const deleteProperty = async (req: Request<{id: string}, {}, {}>, res: Response) => {
+const deleteProperty = async (req: Request<{ id: string }, {}, {}>, res: Response) => {
   const id = parseInt(req.params.id);
 
   try {

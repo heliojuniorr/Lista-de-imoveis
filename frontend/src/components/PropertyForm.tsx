@@ -50,7 +50,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
             return;
         }
 
-        if(id)
+        if (id)
             handleUpdate()
         else
             handlePost()
@@ -89,10 +89,10 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
 
         setMessage({ text: "", type: "" })
     }
-    
+
     useEffect(() => {
-        if(id && property) {
-            setFormData({...property})
+        if (id && property) {
+            setFormData({ ...property })
         }
     }, [])
 
@@ -152,8 +152,8 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
 
                         <div
                             className={`ml-auto inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${formData.status === "active"
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-red-100 text-red-800"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                                 }`}
                         >
                             {formData.status === "active" ? "Active" : "Inactive"}

@@ -8,7 +8,7 @@ npx prisma generate
 
 npx prisma migrate dev --name init
 
-rpm run dev
+npm run dev
 
 ## Frontend:
 cd frontend

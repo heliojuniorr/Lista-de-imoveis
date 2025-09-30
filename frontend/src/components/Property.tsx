@@ -21,7 +21,7 @@ type PropertyPropsType = {
     onEdit: (property: PropertyType) => void
 }
 
-export function Property( props: PropertyPropsType) {
+export function Property(props: PropertyPropsType) {
     const [showEditForm, setShowEditForm] = useState(false)
 
     function handleDelete(id: number) {
@@ -38,12 +38,12 @@ export function Property( props: PropertyPropsType) {
     }
 
     function onEdit(propertyInfo: PropertyInfoType) {
-        props.onEdit({id: props.property.id, ...propertyInfo})
+        props.onEdit({ id: props.property.id, ...propertyInfo })
     }
 
     function editForm() {
-        if(showEditForm)
-            return <PropertyForm id={props.property.id} property={{...props.property}} onEdit={onEdit}/> 
+        if (showEditForm)
+            return <PropertyForm id={props.property.id} property={{ ...props.property }} onEdit={onEdit} />
     }
 
     return (
