@@ -38,7 +38,6 @@ export function Property( props: PropertyPropsType) {
     }
 
     function onEdit(propertyInfo: PropertyInfoType) {
-        console.log("chegou")
         props.onEdit({id: props.property.id, ...propertyInfo})
     }
 
