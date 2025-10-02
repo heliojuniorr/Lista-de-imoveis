@@ -1,32 +1,9 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useContext, useState, type FormEvent } from "react";
 import { api } from "../services/api";
+import { PropertiesContext } from "../context/PropertiesContext";
 
-type PropertyType = {
-    id: number
-    title: string;
-    address: string;
-    status: "active" | "inactive";
-}
-
-type PropertyInfoType = {
-    title: string;
-    address: string;
-    status: "active" | "inactive";
-}
-
-type PropertyFormProps = {
-    id?: number,
-    property?: PropertyInfoType,
-    onEdit?: (property: PropertyInfoType) => void,
-    setPropertyList?: React.Dispatch<React.SetStateAction<PropertyType[]>>
-}
-
-export function PropertyForm({ id, property, onEdit, setPropertyList }: PropertyFormProps) {
-    const [formData, setFormData] = useState<PropertyInfoType>({
-        title: "",
-        address: "",
-        status: "active",
-    });
+export function PropertyForm() {
+    const { propertyFormData, setPropertyFormData, setPropertiesList } = useContext(PropertiesContext)
 
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" | "" }>({
         text: "",
@@ -35,7 +12,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target;
-        setFormData((state) => ({
+        setPropertyFormData((state) => ({
             ...state,
             [name]: value,
         }))
@@ -45,34 +22,34 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
         e.preventDefault();
         setMessage({ text: "", type: "" })
 
-        if (!formData.title || !formData.address) {
+        if (!propertyFormData.title || !propertyFormData.address) {
             setMessage({ text: "Please, fill title and address.", type: "error" })
             return;
         }
 
-        if (id)
-            handleUpdate()
-        else
+        if (propertyFormData.id === -1)
             handlePost()
+        else
+            handleUpdate()
+
+        handleClean()
     }
 
     function handlePost() {
-        api.post("/property", formData).then((res) => {
+        api.post("/property", propertyFormData).then((res) => {
             setMessage({ text: "Saved!", type: "success" })
-            setPropertyList && setPropertyList(state => [...state, res.data])
+            setPropertiesList(state => [...state, res.data])
             console.log(res)
         }).catch((err) => {
             setMessage({ text: "Error!", type: "error" })
             console.error(err)
         })
-
-        handleClean()
     }
 
     function handleUpdate() {
-        api.put(`/property/${id}`, formData).then((res) => {
+        api.put(`/property/${propertyFormData.id}`, propertyFormData).then((res) => {
             setMessage({ text: "Updated!", type: "success" })
-            onEdit && onEdit(formData)
+            setPropertiesList(state => state.map(value => value.id === propertyFormData.id ? propertyFormData : value))
             console.log(res)
         }).catch((err) => {
             setMessage({ text: "Error!", type: "error" })
@@ -81,7 +58,8 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
     }
 
     function handleClean() {
-        setFormData({
+        setPropertyFormData({
+            id: -1,
             title: "",
             address: "",
             status: "active",
@@ -90,15 +68,9 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
         setMessage({ text: "", type: "" })
     }
 
-    useEffect(() => {
-        if (id && property) {
-            setFormData({ ...property })
-        }
-    }, [])
-
     return (
         <main className="w-full max-w-xl bg-white rounded-2xl shadow-md p-6 md:p-10 mx-auto">
-            <h1 className="text-2xl font-semibold mb-4">Property Registration</h1>
+            <h1 className="text-2xl font-semibold mb-4">{`Property ${propertyFormData.id === -1 ? "Registration" : "Modification"}`}</h1>
 
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <div>
@@ -111,7 +83,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
                         type="text"
                         required
                         placeholder="Big house"
-                        value={formData.title}
+                        value={propertyFormData.title}
                         onChange={handleChange}
                         className="block w-full rounded-lg border border-gray-200 px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
                     />
@@ -128,7 +100,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
                         type="text"
                         required
                         placeholder="Great George St, London"
-                        value={formData.address}
+                        value={propertyFormData.address}
                         onChange={handleChange}
                         className="block w-full rounded-lg border border-gray-200 px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
                     />
@@ -142,7 +114,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
                         <select
                             id="status"
                             name="status"
-                            value={formData.status}
+                            value={propertyFormData.status}
                             onChange={handleChange}
                             className="rounded-lg border border-gray-200 px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                         >
@@ -151,12 +123,12 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
                         </select>
 
                         <div
-                            className={`ml-auto inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${formData.status === "active"
+                            className={`ml-auto inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${propertyFormData.status === "active"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
                                 }`}
                         >
-                            {formData.status === "active" ? "Active" : "Inactive"}
+                            {propertyFormData.status === "active" ? "Active" : "Inactive"}
                         </div>
                     </div>
                 </div>
@@ -174,7 +146,7 @@ export function PropertyForm({ id, property, onEdit, setPropertyList }: Property
                         type="submit"
                         className="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                     >
-                        Save
+                        {propertyFormData.id === -1 ? "Save" : "Edit"}
                     </button>
                 </div>
 
